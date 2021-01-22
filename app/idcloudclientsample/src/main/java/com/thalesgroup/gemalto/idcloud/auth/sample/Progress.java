@@ -9,7 +9,12 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.thales.dis.mobile.idcloud.auth.operation.IdCloudProgress;
 
+import java.util.concurrent.Semaphore;
+
 public class Progress {
+    // get lock before accessing the SDK, to prevent concurrent access
+    public final static Semaphore sdkLock = new Semaphore(1);
+
     private static AlertDialog alertDialog;
 
     public static void showProgress(Activity activity, IdCloudProgress progress) {

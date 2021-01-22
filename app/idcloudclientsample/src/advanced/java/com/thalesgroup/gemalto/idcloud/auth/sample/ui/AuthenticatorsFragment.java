@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
@@ -35,6 +34,7 @@ import com.thales.dis.mobile.idcloud.auth.ui.UiCallbacks;
 import com.thales.dis.mobile.idcloud.authui.callback.SampleCommonUiCallback;
 import com.thales.dis.mobile.idcloud.authui.callback.SampleSecurePinUiCallback;
 import com.thalesgroup.gemalto.idcloud.auth.sample.Configuration;
+import com.thalesgroup.gemalto.idcloud.auth.sample.Progress;
 import com.thalesgroup.gemalto.idcloud.auth.sample.R;
 import com.thalesgroup.gemalto.idcloud.auth.sample.idcloudclient.ActivatedAuthenticators;
 import com.thalesgroup.gemalto.idcloud.auth.sample.idcloudclient.AddAuthenticator;
@@ -66,14 +66,17 @@ public class AuthenticatorsFragment extends Fragment {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!Progress.sdkLock.tryAcquire()) return;
                 //Execute the add authenticator use-case.
                 executeAddAuthenticator(new OnExecuteFinishListener() {
                     @Override
                     public void onSuccess() {
+                        Progress.sdkLock.release();
                         showAlertDialog(getString(R.string.addauthenticator_alert_title),getString(R.string.addauthenticator_message));
                     }
                     @Override
                     public void onError(IdCloudClientException e) {
+                        Progress.sdkLock.release();
                         showAlertDialog(getString(R.string.alert_error_title),e.getLocalizedMessage());
                     }
                 });
@@ -242,6 +245,7 @@ public class AuthenticatorsFragment extends Fragment {
                 });
             }
         });
+        Progress.sdkLock.release();
     }
 
     @Override

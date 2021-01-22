@@ -18,14 +18,13 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import com.thales.dis.mobile.idcloud.auth.exception.IdCloudClientException;
 import com.thales.dis.mobile.idcloud.auth.ui.UiCallbacks;
 import com.thales.dis.mobile.idcloud.authui.callback.SampleCommonUiCallback;
 import com.thales.dis.mobile.idcloud.authui.callback.SampleSecurePinUiCallback;
-import com.thalesgroup.gemalto.idcloud.auth.sample.BuildConfig;
 import com.thalesgroup.gemalto.idcloud.auth.sample.Configuration;
+import com.thalesgroup.gemalto.idcloud.auth.sample.Progress;
 import com.thalesgroup.gemalto.idcloud.auth.sample.R;
 import com.thalesgroup.gemalto.idcloud.auth.sample.SecureLogArchive;
 import com.thalesgroup.gemalto.idcloud.auth.sample.idcloudclient.Unenroll;
@@ -48,14 +47,16 @@ public class AuthenticateHomeFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if (!Progress.sdkLock.tryAcquire()) return;
                 executeAuthenticate(new OnExecuteFinishListener() {
                     @Override
                     public void onSuccess() {
+                        Progress.sdkLock.release();
                         showAlertDialog(getString(R.string.authenticate_alert_title),getString(R.string.authenticate_alert_message));
                     }
                     @Override
                     public void onError(IdCloudClientException e) {
+                        Progress.sdkLock.release();
                         showAlertDialog(getString(R.string.alert_error_title),e.getLocalizedMessage());
                     }
                 });
@@ -91,14 +92,17 @@ public class AuthenticateHomeFragment extends Fragment {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!Progress.sdkLock.tryAcquire()) return;
                 //Execute the add Unenroll use-case.
                 executeUnenroll(new OnExecuteFinishListener() {
                     @Override
                     public void onSuccess() {
+                        Progress.sdkLock.release();
                         showAlertDialog(getString(R.string.unenroll_alert_title), getString(R.string.unenroll_alert_message));
                     }
                     @Override
                     public void onError(IdCloudClientException e) {
+                        Progress.sdkLock.release();
                         showAlertDialog(getString(R.string.alert_error_title),e.getLocalizedMessage());
                     }
                 });

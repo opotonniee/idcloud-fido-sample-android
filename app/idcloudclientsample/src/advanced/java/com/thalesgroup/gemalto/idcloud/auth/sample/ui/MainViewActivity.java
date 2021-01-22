@@ -8,13 +8,10 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.thalesgroup.gemalto.idcloud.auth.sample.BuildConfig;
+import com.thalesgroup.gemalto.idcloud.auth.sample.Progress;
 import com.thalesgroup.gemalto.idcloud.auth.sample.R;
-import com.thalesgroup.gemalto.idcloud.auth.sample.ui.AuthenticateHomeFragment;
-import com.thalesgroup.gemalto.idcloud.auth.sample.ui.AuthenticatorsFragment;
 
 public class MainViewActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -43,11 +40,13 @@ public class MainViewActivity extends AppCompatActivity implements BottomNavigat
                 break;
 
             case R.id.navigation_authenticators:
-                fragment = new AuthenticatorsFragment();
+                if (Progress.sdkLock.tryAcquire()) {
+                    fragment = new AuthenticatorsFragment();
+                }
                 break;
         }
 
-        return loadFragment(fragment);
+        return fragment != null ? loadFragment(fragment) : false;
     }
 
     private boolean loadFragment(Fragment fragment) {
