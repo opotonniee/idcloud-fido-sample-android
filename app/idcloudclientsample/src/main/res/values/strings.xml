@@ -3,9 +3,9 @@
     <string name="title_home">Home</string>
     <string name="title_authenticators">Authenticators</string>
     <string name="buttonText_enroll">Enroll</string>
-    <string name="textViewText_enroll">Please generate a QR code on Postman prior to enrollment.</string>
+    <string name="textViewText_enroll">Sign-up to get your enrollment QR code</string>
     <string name="buttonText_authenticate">Authenticate</string>
-    <string name="textViewText_authenticate">Please generate an Authentication event on Postman prior to authentication.</string>
+    <string name="textViewText_authenticate">Check pending authentications</string>
     <string name="buttonText_unenroll">Unenroll</string>
 
     <string name="buttonText_edit">Edit</string>

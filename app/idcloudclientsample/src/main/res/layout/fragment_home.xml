@@ -26,6 +26,7 @@
         android:layout_height="267dp"
         android:singleLine="false"
         android:text="@string/textViewText_authenticate"
+        android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
