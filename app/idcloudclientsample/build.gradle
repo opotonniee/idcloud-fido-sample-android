@@ -61,19 +61,19 @@ android {
             dimension "sampletarget"
             versionNameSuffix "-gettingstarted"
             applicationIdSuffix ".gettingstarted"
-            resValue "string", "app_name", "Getting Started"
+            resValue "string", "app_name", "FIDO Getting Started"
         }
         advanced {
             dimension "sampletarget"
             versionNameSuffix "-advanced"
             applicationIdSuffix ".advanced"
-            resValue "string", "app_name", "Advanced"
+            resValue "string", "app_name", "IdCloud FIDO Auth"
         }
     }
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            outputFileName = "${variant.flavorName}.apk"
+            outputFileName = "IDC-FIDO-Auth-${variant.flavorName}-${java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern('yyyy-MM-dd_kkmm'))}.apk"
         }
     }
 
