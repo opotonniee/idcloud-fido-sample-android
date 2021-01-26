@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -72,7 +73,7 @@ public class AuthenticatorsFragment extends Fragment {
                     @Override
                     public void onSuccess() {
                         Progress.sdkLock.release();
-                        showAlertDialog(getString(R.string.addauthenticator_alert_title),getString(R.string.addauthenticator_message));
+                        showToast(getString(R.string.addauthenticator_message));
                     }
                     @Override
                     public void onError(IdCloudClientException e) {
@@ -146,7 +147,7 @@ public class AuthenticatorsFragment extends Fragment {
                             executeChangePin(new OnExecuteFinishListener() {
                                 @Override
                                 public void onSuccess() {
-                                    showAlertDialog(getString(R.string.changepin_alert_title), getString(R.string.changepin_alert_message));
+                                    showToast(getString(R.string.changepin_alert_message));
                                 }
                                 @Override
                                 public void onError(IdCloudClientException e) {
@@ -201,7 +202,9 @@ public class AuthenticatorsFragment extends Fragment {
                 executeRemoveAuthenticator(authenticators.get(position), new OnExecuteFinishListener() {
                     @Override
                     public void onSuccess() {
-                        showAlertDialog(getString(R.string.removeauthenticator_alert_title), getString(R.string.removeauthenticator_alert_message));
+                        deleteButton.setVisibility(View.GONE);
+                        editButton.setVisibility(View.VISIBLE);
+                        showToast(getString(R.string.removeauthenticator_alert_message));
                     }
                     @Override
                     public void onError(IdCloudClientException e) {
@@ -232,7 +235,7 @@ public class AuthenticatorsFragment extends Fragment {
                                 executeRemoveAuthenticator(authenticators.get((int) l), new OnExecuteFinishListener() {
                                     @Override
                                     public void onSuccess() {
-                                        showAlertDialog(getString(R.string.removeauthenticator_alert_title), getString(R.string.removeauthenticator_alert_message));
+                                        showToast(getString(R.string.removeauthenticator_alert_message));
                                     }
                                     @Override
                                     public void onError(IdCloudClientException e) {
@@ -310,23 +313,9 @@ public class AuthenticatorsFragment extends Fragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                // Reload fragment to refresh authenticator list
-                final FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.detach(AuthenticatorsFragment.this).attach(AuthenticatorsFragment.this).commit();
-
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(AuthenticatorsFragment.this.getContext())
                         .setTitle(title)
-                        .setMessage(message)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                                if(title == getString(R.string.removeauthenticator_alert_title)) {
-                                    deleteButton.setVisibility(View.GONE);
-                                    editButton.setVisibility(View.VISIBLE);
-                                }
-                            }
-                        });
+                        .setMessage(message);
 
                 AlertDialog alertDialog = alertDialogBuilder.create();
                 alertDialog.setCanceledOnTouchOutside(false);
@@ -334,6 +323,20 @@ public class AuthenticatorsFragment extends Fragment {
             }
         });
 
+    }
+
+    protected void showToast(final String message) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // Reload fragment to refresh authenticator list
+                final FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.detach(AuthenticatorsFragment.this).attach(AuthenticatorsFragment.this).commit();
+
+                Toast toast = Toast.makeText(AuthenticatorsFragment.this.getContext(), message, Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
     }
 
     // CustomAdapter class for list authenticators view

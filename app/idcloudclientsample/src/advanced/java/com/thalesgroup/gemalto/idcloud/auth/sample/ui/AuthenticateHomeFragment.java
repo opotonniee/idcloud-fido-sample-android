@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
@@ -52,12 +53,17 @@ public class AuthenticateHomeFragment extends Fragment {
                     @Override
                     public void onSuccess() {
                         Progress.sdkLock.release();
-                        showAlertDialog(getString(R.string.authenticate_alert_title),getString(R.string.authenticate_alert_message));
+                        showToast(getString(R.string.authenticate_alert_message));
                     }
                     @Override
                     public void onError(IdCloudClientException e) {
                         Progress.sdkLock.release();
-                        showAlertDialog(getString(R.string.alert_error_title),e.getLocalizedMessage());
+                        if (e.getError().getCode() == IdCloudClientException.ErrorCode.NO_PENDING_EVENTS.getCode()) {
+                            showToast(e.getLocalizedMessage());
+                        } else {
+                            showAlertDialog(getString(R.string.alert_error_title),e.getLocalizedMessage());
+                        }
+
                     }
                 });
             }
@@ -98,7 +104,9 @@ public class AuthenticateHomeFragment extends Fragment {
                     @Override
                     public void onSuccess() {
                         Progress.sdkLock.release();
-                        showAlertDialog(getString(R.string.unenroll_alert_title), getString(R.string.unenroll_alert_message));
+                        showToast(getString(R.string.unenroll_alert_message));
+                        Intent intent = new Intent(getActivity(), EnrollActivity.class);
+                        getActivity().startActivity(intent);
                     }
                     @Override
                     public void onError(IdCloudClientException e) {
@@ -151,22 +159,21 @@ public class AuthenticateHomeFragment extends Fragment {
             public void run() {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(AuthenticateHomeFragment.this.getContext())
                         .setTitle(title)
-                        .setMessage(message)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                                if (title.equals(getString(R.string.unenroll_alert_title))) {
-                                    Intent intent = new Intent(getActivity(), EnrollActivity.class);
-                                    getActivity().startActivity(intent);
-                                }
-
-                            }
-                        });
+                        .setMessage(message);
                 AlertDialog alertDialog = alertDialogBuilder.create();
                 alertDialog.setCanceledOnTouchOutside(false);
                 alertDialog.show();
             }
         });
     }
+    protected void showToast(final String message) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast toast = Toast.makeText(AuthenticateHomeFragment.this.getContext(), message, Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
+    }
 }
+

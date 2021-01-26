@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -48,7 +49,9 @@ public class EnrollActivity extends AppCompatActivity {
                         executeEnroll(registrationCode, new OnExecuteFinishListener() {
                             @Override
                             public void onSuccess() {
-                                showAlertDialog(getString(R.string.enroll_alert_title),getString(R.string.enroll_alert_message));
+                                showToast(getString(R.string.enroll_alert_message));
+                                Intent intent = new Intent(EnrollActivity.this, MainViewActivity.class);
+                                EnrollActivity.this.startActivity(intent);
                             }
                             @Override
                             public void onError(IdCloudClientException e) {
@@ -111,16 +114,7 @@ public class EnrollActivity extends AppCompatActivity {
             public void run() {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(EnrollActivity.this)
                         .setTitle(title)
-                        .setMessage(message)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                if(title.equals(getString(R.string.enroll_alert_title))) {
-                                    Intent intent = new Intent(EnrollActivity.this, MainViewActivity.class);
-                                    EnrollActivity.this.startActivity(intent);
-                                }
-                            }
-                        });
+                        .setMessage(message);
 
                 AlertDialog alertDialog = alertDialogBuilder.create();
                 alertDialog.setCanceledOnTouchOutside(false);
@@ -128,4 +122,15 @@ public class EnrollActivity extends AppCompatActivity {
             }
         });
     }
+
+    protected void showToast(final String message) {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast toast = Toast.makeText(EnrollActivity.this, message, Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
+    }
+
 }
